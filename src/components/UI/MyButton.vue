@@ -1,10 +1,12 @@
 <template>
-    <button class="button">{{title}}</button>
+    <button class="button">
+        <slot></slot>
+    </button>
 </template>
 
 <script>
 export default {
-    props: ['title']
+    name: 'my-button'
 }
 </script>
 
