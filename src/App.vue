@@ -1,11 +1,12 @@
 <template>
     <div class="app">
         <h1>Страница с постами</h1>
-        <my-button class="btn" @click="showDialog">Создать диалог</my-button>
+        <my-button class="btn" style="margin: 15px 0" @click="showDialog">Создать диалог</my-button>
         <my-dialog v-model:show="dialogVisible">
-            <post-form @create="createPost"/>
-        </my-dialog>        
-        <PostList :posts="posts" @remove="deletePost"/>
+            <post-form @create="createPost" />
+        </my-dialog>
+        <PostList v-if="!isPostLoading" :posts="posts" @remove="removePost" />
+        <div v-else>Идет загрузка...</div>
     </div>
 </template>
 
@@ -13,6 +14,7 @@
 
 import PostList from '@/components/PostList.vue'
 import PostForm from '@/components/PostForm.vue'
+import axios from 'axios';
 
 export default {
     components: {
@@ -21,26 +23,37 @@ export default {
     },
     data() {
         return {
-            posts: [
-                { id: 1, title: 'Пост о java script 1', body: 'Javascript универсальный язык программмирования', },
-                { id: 2, title: 'Пост о java script 2', body: 'Javascript универсальный язык программмирования 2', },
-                { id: 3, title: 'Пост о java script 3', body: 'Javascript универсальный язык программмирования 3', },
-            ],
-            dialogVisible: false
-        } 
+            posts: [],
+            dialogVisible: false,
+            isPostLoading: false,
+        }
     },
     methods: {
         createPost(post) {
             this.posts.push(post);
             this.dialogVisible = false;
         },
-        deletePost(post) {
+        removePost(post) {
             this.posts = this.posts.filter(elem => elem.id !== post.id);
         },
         showDialog() {
             this.dialogVisible = true;
             console.log("hi");
-        }
+        },
+        async fetchPosts() {
+            try {
+                this.isPostLoading = true;
+                const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+                this.posts = response.data;
+            } catch (e) {
+                alert("Ошибка")
+            } finally {
+                this.isPostLoading = false;
+            }
+        },
+    },
+    mounted() {
+        this.fetchPosts();
     }
 }
 </script>
@@ -51,6 +64,7 @@ export default {
     padding: 0;
     box-sizing: border-box;
 }
+
 .app {
     padding: 10px 10px;
 }
