@@ -23,7 +23,7 @@
     }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .dialog {
     top: 0;
     bottom: 0;

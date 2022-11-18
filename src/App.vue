@@ -1,14 +1,15 @@
 <template>
     <div class="app">
         <h1>Страница с постами</h1>
+        <my-input placeholder="Поиск..." v-model="searchQuery"></my-input>
         <div class="app__btns">
             <my-button class="btn" @click="showDialog">Создать диалог</my-button>
-            <my-select v-model="selectedSort" :options="sortOptions"/>
+            <my-select v-model="selectedSort" :options="sortOptions" />
         </div>
         <my-dialog v-model:show="dialogVisible">
             <post-form @create="createPost" />
         </my-dialog>
-        <PostList v-if="!isPostLoading" :posts="posts" @remove="removePost" />
+        <post-list v-if="!isPostLoading" :posts="sortedAndSearchedPosts" @remove="removePost" />
         <div v-else>Идет загрузка...</div>
     </div>
 </template>
@@ -30,9 +31,10 @@ export default {
             dialogVisible: false,
             isPostLoading: false,
             selectedSort: '',
+            searchQuery: '',
             sortOptions: [
-                {value: "title", name: "По названия"},
-                {value: "body", name: "По содержимому"}
+                { value: "title", name: "По названия" },
+                { value: "body", name: "По содержимому" }
             ]
         }
     },
@@ -62,7 +64,22 @@ export default {
     },
     mounted() {
         this.fetchPosts();
-    }
+    },
+    watch: {
+        // selectedSort(newValue) {
+        //     this.posts.sort((a, b) => {
+        //         return a[newValue]?.localeCompare(b[newValue]);
+        //     });
+        // }
+    },
+    computed: {
+        sortedPosts () {
+            return [...this.posts].sort((a, b) => a[this.selectedSort]?.localeCompare(b[this.selectedSort]));
+        },
+        sortedAndSearchedPosts() {
+            return this.sortedPosts.filter(post => post.title.toLowerCase().includes(this.searchQuery.toLowerCase()));
+        }
+    },
 }
 </script>
 
@@ -76,6 +93,7 @@ export default {
 .app {
     padding: 10px 10px;
 }
+
 .app__btns {
     display: flex;
     justify-content: space-between;
