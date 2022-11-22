@@ -11,6 +11,16 @@
         </my-dialog>
         <post-list v-if="!isPostLoading" :posts="sortedAndSearchedPosts" @remove="removePost" />
         <div v-else>Идет загрузка...</div>
+        <div class="page__wrapper">
+            <post-pagination 
+                v-for="pageNumber in totalPages"
+                :key="pageNumber"
+                :page="pageNumber" 
+                :class="{
+                    'current-page': page === pageNumber
+                }" 
+                @click="changePage(pageNumber)" />
+        </div>
     </div>
 </template>
 
@@ -18,12 +28,14 @@
 
 import PostList from '@/components/PostList.vue'
 import PostForm from '@/components/PostForm.vue'
+import PostPagination from '@/components/PostPagination.vue'
 import axios from 'axios';
 
 export default {
     components: {
         PostList,
         PostForm,
+        PostPagination,
     },
     data() {
         return {
@@ -32,6 +44,9 @@ export default {
             isPostLoading: false,
             selectedSort: '',
             searchQuery: '',
+            page: 1,
+            limit: 10,
+            totalPages: 0,
             sortOptions: [
                 { value: "title", name: "По названия" },
                 { value: "body", name: "По содержимому" }
@@ -53,7 +68,13 @@ export default {
         async fetchPosts() {
             try {
                 this.isPostLoading = true;
-                const response = await axios.get('https://jsonplaceholder.typicode.com/posts?_limit=10');
+                const response = await axios.get('https://jsonplaceholder.typicode.com/posts', {
+                    params: {
+                        _page: this.page,
+                        _limit: this.limit
+                    }
+                });
+                this.totalPages = Math.ceil(response.headers['x-total-count'] / this.limit)
                 this.posts = response.data;
             } catch (e) {
                 alert("Ошибка")
@@ -61,19 +82,19 @@ export default {
                 this.isPostLoading = false;
             }
         },
+        changePage (pageNumber) {
+            this.page = pageNumber;
+            this.fetchPosts();
+        },
     },
     mounted() {
         this.fetchPosts();
     },
     watch: {
-        // selectedSort(newValue) {
-        //     this.posts.sort((a, b) => {
-        //         return a[newValue]?.localeCompare(b[newValue]);
-        //     });
-        // }
+
     },
     computed: {
-        sortedPosts () {
+        sortedPosts() {
             return [...this.posts].sort((a, b) => a[this.selectedSort]?.localeCompare(b[this.selectedSort]));
         },
         sortedAndSearchedPosts() {
@@ -98,5 +119,10 @@ export default {
     display: flex;
     justify-content: space-between;
     margin: 15px 0;
+}
+
+.page__wrapper {
+    display: flex;
+    margin-top: 15px;
 }
 </style>
