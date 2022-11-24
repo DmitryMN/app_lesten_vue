@@ -6,6 +6,7 @@
             <div><strong>Описание:</strong>{{ post.body }}</div>
         </div>
         <div class="post__btn">
+            <my-button>Открыть</my-button>
             <my-button @click="$emit('remove', post)">Удалить</my-button>
         </div>
     </div>
@@ -32,5 +33,8 @@ export default {
     padding: 15px;
     border: 1px solid #131313;
     margin-top: 15px;
+}
+.post__btn {
+    display: flex;
 }
 </style>
