@@ -5,6 +5,7 @@
             <ul class="navbar__list">
                 <li class="navbar__item"><my-button @click="$router.push('/posts')">Посты</my-button></li>
                 <li class="navbar__item"><my-button @click="$router.push('/about')">О нас</my-button></li>
+                <li class="navbar__item"><my-button @click="$router.push('/store')">Стор</my-button></li>
             </ul>
         </nav>
     </div>
