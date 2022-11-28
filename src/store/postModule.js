@@ -1,4 +1,6 @@
-export default postModule = {
+import axios from "axios";
+
+export const postModule = {
     state: () => {
         return {
             posts: [],
@@ -55,7 +57,7 @@ export default postModule = {
                 commit('setTotalPages', Math.ceil(response.headers['x-total-count'] / state.limit));
                 commit('setPosts', response.data);
             } catch (e) {
-                alert("Ошибка")
+                console.log(e);
             } finally {
                 commit('setLoading', false);
             }
@@ -73,9 +75,10 @@ export default postModule = {
                 commit('setTotalPages', Math.ceil(response.headers['x-total-count'] / state.limit));
                 commit('setPosts', [...state.posts, ...response.data]);
             } catch (e) {
-                alert("Ошибка")
+                console.log(e)
             } finally {
             }
         },
-    }
+    },
+    namespaced: true,
 }
