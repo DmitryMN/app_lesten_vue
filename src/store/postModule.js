@@ -31,8 +31,8 @@ export const postModule = {
         setLoading(state, bool) {
             state.isPostLoading = bool;
         },
-        setSelectedSort(state, selectSort) {
-            state.selectSort = selectSort;
+        setSelectedSort(state, selectedSort) {
+            state.selectedSort = selectedSort;
         },
         setSearchQuery(state, searchQuery) {
             state.searchQuery = searchQuery;
@@ -42,6 +42,9 @@ export const postModule = {
         },
         setTotalPages(state, totalPages) {
             state.totalPages = totalPages;
+        },
+        removePost(state, post) {
+            state.posts = state.posts.filter(elem => elem.id !== post.id);
         },
     },
     actions: {

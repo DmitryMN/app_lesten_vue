@@ -4,7 +4,7 @@
         <my-input v-focus placeholder="Поиск..." :model-value="searchQuery" @update:model-value="setSearchQuery"></my-input>
         <div class="post__btns">
             <my-button class="btn" @click="showDialog">Создать диалог</my-button>
-            <my-select :options="sortOptions" :model-value="selectedSort"/>
+            <my-select :model-value="selectedSort" @update:model-value="setSelectedSort" :options="sortOptions"/>
         </div>
         <my-dialog v-model:show="dialogVisible">
             <post-form @create="createPost" />
@@ -36,6 +36,8 @@ export default {
         ...mapMutations({
             setPage: 'post/setPage',
             setSearchQuery: 'post/setSearchQuery',
+            setSelectedSort: 'post/setSelectedSort',
+            removePost: 'post/removePost',            
         }),
         ...mapActions({
             loadMorePosts: 'post/loadMorePosts',
@@ -44,9 +46,6 @@ export default {
         createPost(post) {
             this.posts.push(post);
             this.dialogVisible = false;
-        },
-        removePost(post) {
-            this.posts = this.posts.filter(elem => elem.id !== post.id);
         },
         showDialog() {
             this.dialogVisible = true;
